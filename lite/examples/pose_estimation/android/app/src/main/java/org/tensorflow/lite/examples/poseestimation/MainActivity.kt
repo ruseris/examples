@@ -20,6 +20,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.pm.PackageManager
+import android.media.AudioAttributes
 import android.os.Bundle
 import android.os.Process
 import android.view.SurfaceView
@@ -37,8 +38,13 @@ import kotlinx.coroutines.launch
 import org.tensorflow.lite.examples.poseestimation.camera.CameraSource
 import org.tensorflow.lite.examples.poseestimation.data.Device
 import org.tensorflow.lite.examples.poseestimation.ml.*
+import android.media.MediaPlayer
+
+
+
 
 class MainActivity : AppCompatActivity() {
+
     companion object {
         private const val FRAGMENT_DIALOG = "dialog"
     }
@@ -77,6 +83,8 @@ class MainActivity : AppCompatActivity() {
             if (isGranted) {
                 // Permission is granted. Continue the action or workflow in your
                 // app.
+
+
                 openCamera()
             } else {
                 // Explain to the user that the feature is unavailable because the
@@ -153,10 +161,12 @@ class MainActivity : AppCompatActivity() {
         if (!isCameraPermissionGranted()) {
             requestPermission()
         }
+
     }
 
     override fun onStart() {
         super.onStart()
+
         openCamera()
     }
 

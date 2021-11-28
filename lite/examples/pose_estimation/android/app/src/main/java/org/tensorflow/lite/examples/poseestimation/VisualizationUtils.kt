@@ -39,24 +39,24 @@ object VisualizationUtils {
 
     /** Pair of keypoints to draw lines between.  */
     private val bodyJoints = listOf(
-        Pair(BodyPart.NOSE, BodyPart.LEFT_EYE),
-        Pair(BodyPart.NOSE, BodyPart.RIGHT_EYE),
-        Pair(BodyPart.LEFT_EYE, BodyPart.LEFT_EAR),
-        Pair(BodyPart.RIGHT_EYE, BodyPart.RIGHT_EAR),
-        Pair(BodyPart.NOSE, BodyPart.LEFT_SHOULDER),
-        Pair(BodyPart.NOSE, BodyPart.RIGHT_SHOULDER),
+        //Pair(BodyPart.NOSE, BodyPart.LEFT_EYE),
+        //Pair(BodyPart.NOSE, BodyPart.RIGHT_EYE),
+        //Pair(BodyPart.LEFT_EYE, BodyPart.LEFT_EAR),
+        //Pair(BodyPart.RIGHT_EYE, BodyPart.RIGHT_EAR),
+        //Pair(BodyPart.NOSE, BodyPart.LEFT_SHOULDER),
+        //Pair(BodyPart.NOSE, BodyPart.RIGHT_SHOULDER),
         Pair(BodyPart.LEFT_SHOULDER, BodyPart.LEFT_ELBOW),
         Pair(BodyPart.LEFT_ELBOW, BodyPart.LEFT_WRIST),
-        Pair(BodyPart.RIGHT_SHOULDER, BodyPart.RIGHT_ELBOW),
-        Pair(BodyPart.RIGHT_ELBOW, BodyPart.RIGHT_WRIST),
-        Pair(BodyPart.LEFT_SHOULDER, BodyPart.RIGHT_SHOULDER),
-        Pair(BodyPart.LEFT_SHOULDER, BodyPart.LEFT_HIP),
-        Pair(BodyPart.RIGHT_SHOULDER, BodyPart.RIGHT_HIP),
-        Pair(BodyPart.LEFT_HIP, BodyPart.RIGHT_HIP),
-        Pair(BodyPart.LEFT_HIP, BodyPart.LEFT_KNEE),
-        Pair(BodyPart.LEFT_KNEE, BodyPart.LEFT_ANKLE),
-        Pair(BodyPart.RIGHT_HIP, BodyPart.RIGHT_KNEE),
-        Pair(BodyPart.RIGHT_KNEE, BodyPart.RIGHT_ANKLE)
+        //Pair(BodyPart.RIGHT_SHOULDER, BodyPart.RIGHT_ELBOW),
+        //Pair(BodyPart.RIGHT_ELBOW, BodyPart.RIGHT_WRIST),
+        //Pair(BodyPart.LEFT_SHOULDER, BodyPart.RIGHT_SHOULDER),
+        //Pair(BodyPart.LEFT_SHOULDER, BodyPart.LEFT_HIP),
+        //Pair(BodyPart.RIGHT_SHOULDER, BodyPart.RIGHT_HIP),
+        //Pair(BodyPart.LEFT_HIP, BodyPart.RIGHT_HIP),
+        //Pair(BodyPart.LEFT_HIP, BodyPart.LEFT_KNEE),
+        //Pair(BodyPart.LEFT_KNEE, BodyPart.LEFT_ANKLE),
+        //Pair(BodyPart.RIGHT_HIP, BodyPart.RIGHT_KNEE),
+        //Pair(BodyPart.RIGHT_KNEE, BodyPart.RIGHT_ANKLE)
     )
 
     // Draw line and point indicate body pose
@@ -107,14 +107,54 @@ object VisualizationUtils {
             }
 
             person.keyPoints.forEach { point ->
-                originalSizeCanvas.drawCircle(
-                    point.coordinate.x,
-                    point.coordinate.y,
-                    CIRCLE_RADIUS,
-                    paintCircle
-                )
+
+                // Draw circles only for 3 points
+                if ((point.bodyPart == BodyPart.LEFT_SHOULDER)
+                    || (point.bodyPart == BodyPart.LEFT_ELBOW)
+                    || (point.bodyPart == BodyPart.LEFT_WRIST)) {
+
+                    originalSizeCanvas.drawCircle(
+                        point.coordinate.x,
+                        point.coordinate.y,
+                        CIRCLE_RADIUS,
+                        paintCircle
+                    )
+                }
             }
+
+
+
+            println(person)
+            println(person.keyPoints.get(5).coordinate.x)
+            println(person.keyPoints.get(5).coordinate.y)
+
+            // Elbow flextion
+            // TODO: degrees are not great, fix them.
+
+//            var leftShoulder = person.keyPoints.get(5).coordinate
+//            var leftElbow = person.keyPoints.get(7).coordinate
+//            var leftWrist = person.keyPoints.get(9).coordinate
+//
+//            var leftElbowFlexion = ((Math.atan2((leftWrist.y - leftElbow.y).toDouble(),
+//                    (leftWrist.x - leftElbow.x).toDouble())
+//                    - Math.atan2((leftShoulder.y - leftElbow.y).toDouble(),
+//                    (leftShoulder.x - leftElbow.x).toDouble())) * (180 / Math.PI))
+//
+//            val leftElbowTextX = max(0f, leftElbow.x + 20)
+//            val leftElbowTextY = max(0f, leftElbow.y + 20)
+//
+//            originalSizeCanvas.drawText(
+//                leftElbowFlexion.toString(),
+//                leftElbowTextX,
+//                leftElbowTextY,
+//                paintText
+//            )
+
+
+
         }
+
+
         return output
     }
 }

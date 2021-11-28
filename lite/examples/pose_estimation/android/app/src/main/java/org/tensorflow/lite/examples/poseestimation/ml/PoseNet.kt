@@ -180,7 +180,7 @@ class PoseNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
             )
             totalScore += confidenceScores[idx]
         }
-        return Person(keyPoints = keypointList.toList(), score = totalScore / numKeypoints)
+        return Person(keyPoints = keypointList.toMutableList(), score = totalScore / numKeypoints)
     }
 
     override fun lastInferenceTimeNanos(): Long = lastInferenceTimeNanos

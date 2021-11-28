@@ -35,6 +35,8 @@ import android.view.SurfaceView
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.tensorflow.lite.examples.poseestimation.VisualizationUtils
 import org.tensorflow.lite.examples.poseestimation.YuvToRgbConverter
+import org.tensorflow.lite.examples.poseestimation.data.BodyPart
+import org.tensorflow.lite.examples.poseestimation.data.KeyPoint
 import org.tensorflow.lite.examples.poseestimation.data.Person
 import org.tensorflow.lite.examples.poseestimation.ml.MoveNetMultiPose
 import org.tensorflow.lite.examples.poseestimation.ml.PoseClassifier
@@ -269,12 +271,54 @@ class CameraSource(
         visualize(persons, bitmap)
     }
 
+    /*
+    0 	nose
+    1 	leftEye
+    2 	rightEye
+    3 	leftEar
+    4 	rightEar
+    5 	leftShoulder +
+    6 	rightShoulder
+    7 	leftElbow +
+    8 	rightElbow
+    9 	leftWrist +
+    10 	rightWrist
+    11 	leftHip
+    12 	rightHip
+    13 	leftKnee
+    14 	rightKnee
+    15 	leftAnkle
+    16 	rightAnkle
+     */
+
     private fun visualize(persons: List<Person>, bitmap: Bitmap) {
 
+        // Moved to visualisationUtils.kt
+//
+//        persons.forEach {
+//
+//
+//            for (i in 16 downTo 0) {
+//                if ((i == 5) && (i == 7) && (i == 9)) {
+//                    continue
+//                }
+//                if ((it.keyPoints.get(i).bodyPart != BodyPart.LEFT_SHOULDER)
+//                    && (it.keyPoints.get(i).bodyPart != BodyPart.LEFT_ELBOW)
+//                    && (it.keyPoints.get(i).bodyPart != BodyPart.LEFT_WRIST)) {
+//                    it.keyPoints.removeAt(i)
+//                    //make for dynamic, not 17
+//                }
+//
+//            }
+//
+//        }
+//
+//        println(persons)
         val outputBitmap = VisualizationUtils.drawBodyKeypoints(
             bitmap,
             persons.filter { it.score > MIN_CONFIDENCE }, isTrackerEnabled
         )
+
 
         val holder = surfaceView.holder
         val surfaceCanvas = holder.lockCanvas()
