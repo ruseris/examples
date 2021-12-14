@@ -63,6 +63,8 @@ class MainActivity : AppCompatActivity() {
     /** Default device is CPU */
     private var device = Device.CPU
 
+    private lateinit var spnObject: Spinner
+
     private lateinit var tvScore: TextView
     private lateinit var tvFPS: TextView
     private lateinit var spnDevice: Spinner
@@ -142,6 +144,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // keep screen on while app is running
+
+        spnObject = findViewById(R.id.spnObject)
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         tvScore = findViewById(R.id.tvScore)
         tvFPS = findViewById(R.id.tvFps)
@@ -275,6 +280,18 @@ class MainActivity : AppCompatActivity() {
             spnTracker.adapter = adaper
             spnTracker.onItemSelectedListener = changeTrackerListener
         }
+
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.tfe_pe_object, android.R.layout.simple_spinner_item
+        ).also { adaper ->
+            adaper.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+            spnObject.adapter = adaper
+            spnObject.onItemSelectedListener = changeTrackerListener
+        }
+
+
     }
 
     // Change model when app is running

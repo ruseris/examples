@@ -16,13 +16,14 @@ limitations under the License.
 
 package org.tensorflow.lite.examples.poseestimation
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.R.attr
 import org.tensorflow.lite.examples.poseestimation.data.BodyPart
 import org.tensorflow.lite.examples.poseestimation.data.Person
+import kotlin.math.atan2
 import kotlin.math.max
+import android.R.attr.angle
+import android.graphics.*
+
 
 object VisualizationUtils {
     /** Radius of circle used to draw keypoints.  */
@@ -39,25 +40,32 @@ object VisualizationUtils {
 
     /** Pair of keypoints to draw lines between.  */
     private val bodyJoints = listOf(
-        //Pair(BodyPart.NOSE, BodyPart.LEFT_EYE),
-        //Pair(BodyPart.NOSE, BodyPart.RIGHT_EYE),
-        //Pair(BodyPart.LEFT_EYE, BodyPart.LEFT_EAR),
-        //Pair(BodyPart.RIGHT_EYE, BodyPart.RIGHT_EAR),
-        //Pair(BodyPart.NOSE, BodyPart.LEFT_SHOULDER),
-        //Pair(BodyPart.NOSE, BodyPart.RIGHT_SHOULDER),
+        Pair(BodyPart.NOSE, BodyPart.LEFT_EYE),
+        Pair(BodyPart.NOSE, BodyPart.RIGHT_EYE),
+        Pair(BodyPart.LEFT_EYE, BodyPart.LEFT_EAR),
+        Pair(BodyPart.RIGHT_EYE, BodyPart.RIGHT_EAR),
+        Pair(BodyPart.NOSE, BodyPart.LEFT_SHOULDER),
+        Pair(BodyPart.NOSE, BodyPart.RIGHT_SHOULDER),
         Pair(BodyPart.LEFT_SHOULDER, BodyPart.LEFT_ELBOW),
         Pair(BodyPart.LEFT_ELBOW, BodyPart.LEFT_WRIST),
-        //Pair(BodyPart.RIGHT_SHOULDER, BodyPart.RIGHT_ELBOW),
-        //Pair(BodyPart.RIGHT_ELBOW, BodyPart.RIGHT_WRIST),
-        //Pair(BodyPart.LEFT_SHOULDER, BodyPart.RIGHT_SHOULDER),
-        //Pair(BodyPart.LEFT_SHOULDER, BodyPart.LEFT_HIP),
-        //Pair(BodyPart.RIGHT_SHOULDER, BodyPart.RIGHT_HIP),
-        //Pair(BodyPart.LEFT_HIP, BodyPart.RIGHT_HIP),
-        //Pair(BodyPart.LEFT_HIP, BodyPart.LEFT_KNEE),
-        //Pair(BodyPart.LEFT_KNEE, BodyPart.LEFT_ANKLE),
-        //Pair(BodyPart.RIGHT_HIP, BodyPart.RIGHT_KNEE),
-        //Pair(BodyPart.RIGHT_KNEE, BodyPart.RIGHT_ANKLE)
+        Pair(BodyPart.RIGHT_SHOULDER, BodyPart.RIGHT_ELBOW),
+        Pair(BodyPart.RIGHT_ELBOW, BodyPart.RIGHT_WRIST),
+        Pair(BodyPart.LEFT_SHOULDER, BodyPart.RIGHT_SHOULDER),
+        Pair(BodyPart.LEFT_SHOULDER, BodyPart.LEFT_HIP),
+        Pair(BodyPart.RIGHT_SHOULDER, BodyPart.RIGHT_HIP),
+        Pair(BodyPart.LEFT_HIP, BodyPart.RIGHT_HIP),
+        Pair(BodyPart.LEFT_HIP, BodyPart.LEFT_KNEE),
+        Pair(BodyPart.LEFT_KNEE, BodyPart.LEFT_ANKLE),
+        Pair(BodyPart.RIGHT_HIP, BodyPart.RIGHT_KNEE),
+        Pair(BodyPart.RIGHT_KNEE, BodyPart.RIGHT_ANKLE)
     )
+
+    // TODO: connect with frontend
+    private val objectToEstimate: String = "Left Hand"
+
+    private val leftShoulder = Point();
+    private val leftElbow = Point();
+    private val leftWrist = Point();
 
     // Draw line and point indicate body pose
     fun drawBodyKeypoints(
@@ -100,28 +108,120 @@ object VisualizationUtils {
                     originalSizeCanvas.drawRect(it, paintLine)
                 }
             }
-            bodyJoints.forEach {
-                val pointA = person.keyPoints[it.first.position].coordinate
-                val pointB = person.keyPoints[it.second.position].coordinate
-                originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
-            }
+            println(objectToEstimate);
 
-            person.keyPoints.forEach { point ->
+            /** Draws lines between points **/
 
-                // Draw circles only for 3 points
-                if ((point.bodyPart == BodyPart.LEFT_SHOULDER)
-                    || (point.bodyPart == BodyPart.LEFT_ELBOW)
-                    || (point.bodyPart == BodyPart.LEFT_WRIST)) {
+            when (objectToEstimate) {
+                "Full Body" -> {
 
-                    originalSizeCanvas.drawCircle(
-                        point.coordinate.x,
-                        point.coordinate.y,
-                        CIRCLE_RADIUS,
-                        paintCircle
+                    bodyJoints.forEach {
+
+                        val pointA = person.keyPoints[it.first.position].coordinate
+                        val pointB = person.keyPoints[it.second.position].coordinate
+                        originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
+                    }
+
+                }
+                "Left Hand" -> {
+                    bodyJoints.forEach {
+                        if((it.first == BodyPart.LEFT_SHOULDER) && (it.second == BodyPart.LEFT_ELBOW)
+                                || (it.first == BodyPart.LEFT_ELBOW) && (it.second == BodyPart.LEFT_WRIST)) {
+                            val pointA = person.keyPoints[it.first.position].coordinate
+                            val pointB = person.keyPoints[it.second.position].coordinate
+                            originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
+                        }
+                    }
+                }
+                "Left Leg" -> {
+
+                    //TODO: implement
+
+                }
+                else -> {
+                    print(
+                        "objectToEstimate is not defined as expected. Check which object " +
+                                "to draw."
                     )
                 }
             }
 
+//            bodyJoints.forEach {
+//
+//                val pointA = person.keyPoints[it.first.position].coordinate
+//                val pointB = person.keyPoints[it.second.position].coordinate
+//                originalSizeCanvas.drawLine(pointA.x, pointA.y, pointB.x, pointB.y, paintLine)
+//            }
+
+            /** Draws points on image **/
+
+            person.keyPoints.forEach { point ->
+
+                when (objectToEstimate) {
+                    "Full Body" -> {
+                        originalSizeCanvas.drawCircle(
+                            point.coordinate.x,
+                            point.coordinate.y,
+                            CIRCLE_RADIUS,
+                            paintCircle
+                        )
+                    }
+
+                    "Left Hand" -> {
+
+                        // Draw circles only for 3 points
+                        if ((point.bodyPart == BodyPart.LEFT_SHOULDER)
+                            || (point.bodyPart == BodyPart.LEFT_ELBOW)
+                            || (point.bodyPart == BodyPart.LEFT_WRIST)) {
+
+                            if (point.bodyPart == BodyPart.LEFT_SHOULDER) {
+                                leftShoulder.x = point.coordinate.x.toInt();
+                                leftShoulder.y = point.coordinate.y.toInt();
+                            } else if (point.bodyPart == BodyPart.LEFT_ELBOW) {
+                                leftElbow.x = point.coordinate.x.toInt();
+                                leftElbow.y = point.coordinate.y.toInt();
+                            } else {
+                                leftWrist.x = point.coordinate.x.toInt();
+                                leftWrist.y = point.coordinate.y.toInt();
+                            }
+
+                            originalSizeCanvas.drawCircle(
+                                point.coordinate.x,
+                                point.coordinate.y,
+                                CIRCLE_RADIUS,
+                                paintCircle
+                            )
+                        }
+
+                    }
+
+                    "Left Leg" -> {
+
+                        //TODO: implement
+
+                    }
+                    else -> {
+                        print("objectToEstimate is not defined as expected. Check which object " +
+                                "to draw.")
+                    }
+                }
+
+
+
+
+            }
+
+
+
+            var result = (Math.atan2(leftWrist.y.toDouble() - leftElbow.y, leftWrist.x.toDouble()  - leftElbow.x) - Math.atan2(
+                leftShoulder.y.toDouble()  - leftElbow.y, leftShoulder.x.toDouble()  - leftElbow.x)) * (180 / Math.PI);
+
+            originalSizeCanvas.drawText(
+                    result.toString(),
+                (leftElbow.x - 20).toFloat(),
+                    leftElbow.y.toFloat(),
+                    paintText
+                )
 
 
             println(person)
