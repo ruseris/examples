@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@null"
-            android:src="@drawable/tfl2_logo" />
+            android:src="@drawable/name" />
     </androidx.appcompat.widget.Toolbar>
 
     <include layout="@layout/bottom_sheet_layout" />
